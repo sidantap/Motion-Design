@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#181511" />
+    <meta name="theme-color" content="#0d0d0b" />
     <meta
       name="description"
       content="Sidan's portfolio — digital experiences, shaped by curiosity and rooted in Nepal."
@@ -51,28 +51,31 @@
             >Step into my work <span>↗</span></a
           >
         </div>
-        <div class="portal-scene">
-          <div class="portal" id="portal">
+        <div class="hero-visual">
+          <div class="scene-art">
             <img
               class="gate-photo"
-              src="/src/assets/newar-doorway.webp"
-              alt="Photorealistic Newar-inspired doorway with deeply carved aged timber and worn stone steps"
-              width="1024"
-              height="1536"
+              src="/src/assets/himalayan-arch.webp"
+              alt="A deeply carved Nepali timber arch framing Himalayan snow peaks and misty valleys at sunset"
+              width="1672"
+              height="941"
               fetchpriority="high"
               decoding="async"
             />
             <div class="inside">
-              <canvas id="curtain" aria-hidden="true"></canvas>
+              <canvas id="curtain" data-arch="true" aria-hidden="true"></canvas>
             </div>
           </div>
+        </div>
+        <div class="portal-controls">
           <button
             class="curtain-control"
             aria-label="Part the chain curtain"
             aria-pressed="false"
           >
-            <span>↔</span> Move through the chains</button
-          ><span class="gate-caption"
+            <span>↔</span> Move through the chains
+          </button>
+          <span class="gate-caption"
             >A LITTLE OF HOME. A DOOR TO WHAT’S NEXT.</span
           >
         </div>

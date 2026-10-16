@@ -1,12 +1,12 @@
 ---
 version: alpha
 colors:
-  background: "#181511"
+  background: "#0d0d0b"
   ink: "#f2e4cc"
   muted: "#c4af94"
   brass: "#c89b55"
-  dark: "#100e0b"
-  surface: "#272118"
+  dark: "#080907"
+  surface: "#211d16"
 typography:
   display:
     fontFamily: "Manrope, sans-serif"
@@ -22,15 +22,17 @@ A personal portfolio landing page, grounded in Nepal. The supplied video establi
 
 ## Visual direction
 
-A traditional Newar-inspired portal, slightly right of center, is the signature. The user rejected the vector gate as cartoonish. The signature now uses a locally stored, photorealistic generated architectural image of deeply carved, weathered Newar-inspired timber, natural raking light, and worn stone steps. The image is an imagined architectural study, not documentary photography of a real temple. Do not replace it with flat vector ornament or polished gold gradients. Left-aligned introductory text balances the portal. The user’s current direction is dark timber: charcoal walnut surfaces, aged carved wood, warm ivory text, and brass. The photographic corridor and courtyard provide actual visual depth. A canvas chain curtain is precisely aligned to the rectangular opening. Fine aged brass links use restrained reflections and gravity; stone, wood, and lighting come from the photographic asset. Feathered image edges blend into the dark page. Avoid artificial arches, bright uniform metal, repeated cartoon motifs, or heavy film-grain overlays.
+A full-width photographic scene follows the user's latest reference: a deeply carved, scalloped Nepali timber arch framing Himalayan snow peaks, mist, and sunset. The arch sits right of center; ivory portfolio text sits on the shadowed wall at left. This is an imagined generated architectural scene, not documentary photography. The surrounding building and stone floor fill the viewport rather than presenting a separate doorway cutout. Mobile places the copy above a portrait crop focused on the mountain opening. Preserve the actual carving, neutral dark wood, warm sunset rim light, cool mountain shadows, and visible depth.
+
+The curtain is rendered over the opening with individually shaded, interlocking bronze tube links, alternating face and edge orientations, patina, cool reflections, and narrow warm highlights. It follows the arch crest and gathers under gravity. Keep the center view readable and avoid uniformly glowing yellow outlines, flat floral symbols, beaded dots, or exaggerated waves.
 
 ## Canonical tokens
 
-Model B ownership: `src/style.css` `:root` is canonical; this document mirrors those tokens. Consumers are the page surfaces, text, controls, and scrollbar rules; there is no independent theme adapter. Background `--background` #181511; ivory `--ink` #f2e4cc; muted sand `--muted` #c4af94; aged brass `--brass` #c89b55; deep timber `--dark` #100e0b; raised walnut `--surface` #272118. Scrollbars use `--thumb` #806345, `--thumb-hover` #ac875b, and `--track` #17130f; subtle separators use `--border` #c89b5540. Manrope for display, DM Sans for body and utility, Georgia for the single italic word. System fallbacks remain usable if Google Fonts is unavailable.
+Model B ownership: `src/style.css` `:root` is canonical; this document mirrors those tokens. Consumers are the page surfaces, text, controls, and scrollbar rules; there is no independent theme adapter. Background `--background` #0d0d0b; ivory `--ink` #f2e4cc; muted sand `--muted` #c4af94; aged brass `--brass` #c89b55; deep timber `--dark` #080907; raised walnut `--surface` #211d16. Scrollbars use `--thumb` #806345, `--thumb-hover` #ac875b, and `--track` #17130f; subtle separators use `--border` #c89b5540. Manrope for display, DM Sans for body and utility, Georgia for the single italic word. System fallbacks remain usable if Google Fonts is unavailable.
 
 ## Behavior
 
-Chain rendering lives in `src/curtain.js`; pointer movement pushes individual chains; a native button provides the keyboard/touch equivalent. Sound starts off and is opt-in. Reduced motion removes ambient sway and spring movement. Mobile stacks text above the gate. Navigation uses real anchors. The work entry is the actual doorway experiment; do not invent client projects.
+Chain rendering lives in `src/curtain.js`; pointer movement pushes individual chains; a native button provides the keyboard/touch equivalent. Sound starts off and is opt-in. Reduced motion removes ambient sway and spring movement. The curtain rests slightly gathered to retain a view; the Part button gathers it fully. Photograph and canvas share a coordinate space in `src/main.js` so viewport cropping keeps the chains attached to the architecture. Mobile stacks text above the gate. Navigation uses real anchors. The work entry is the actual doorway experiment; do not invent client projects.
 
 ## Content limitations
 
@@ -42,4 +44,4 @@ Build with npm run build. Browser tests cover navigation, curtain toggle, sound 
 
 ## Asset
 
-`src/assets/newar-doorway.webp` is the locally bundled, generated 1024 × 1536 architectural image, optimized to WebP without changing its composition. The hero and work preview share this asset. Preserve the entrance alignment (`.inside`) when replacing or recropping it.
+`src/assets/himalayan-arch.webp` is the locally bundled, generated 1672 × 941 scene based on the user's mountain-and-arch reference, optimized to WebP without changing the composition. The hero and work preview share this asset. Canvas alignment (`.inside`) uses left 45.9%, right 11.9%, top 14.8%, bottom 9.1% of the image. Its top mask and anchor offsets trace the arch. The hero's image and overlay move together when cropped. Preserve this relationship when replacing the scene.

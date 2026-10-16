@@ -10,7 +10,7 @@ export function initCurtain() {
 
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const Audio = window.AudioContext || window.webkitAudioContext;
-  const strandCount = 34;
+  let strandCount = 32;
   const segmentCount = 20;
   const fixedStep = 1 / 90;
   const pointer = { active: false, x: 0, y: 0 };
@@ -18,7 +18,9 @@ export function initCurtain() {
   let height = 0;
   let strands = [];
   let parted = false;
-  let gathered = 0;
+  // A little slack leaves a view through the centre even before interaction.
+  const restingGather = 0.34;
+  let gathered = restingGather;
   let gatherVelocity = 0;
   let frame = 0;
   let lastTime = 0;
@@ -28,6 +30,8 @@ export function initCurtain() {
   let audioEnabled = false;
   let audio;
   let lastChime = -Infinity;
+  let linkSprites = [];
+  let linkLength = 5.2;
 
   const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
   const canAnimate = () =>
@@ -40,7 +44,7 @@ export function initCurtain() {
       x: left
         ? width * (0.035 + order * 0.004)
         : width * (0.965 - order * 0.004),
-      y: strand.length * 0.55,
+      y: strand.anchorY + strand.length * 0.55,
     };
   }
 
@@ -54,11 +58,16 @@ export function initCurtain() {
       const t = Math.min(j / tieIndex, 1);
       const bend = t * t * (3 - 2 * t);
       let x = strand.anchor + (tie.x - strand.anchor) * amount * bend;
-      let y = p * strand.length;
+      let y = strand.anchorY + p * strand.length;
       if (j <= tieIndex) {
-        y += (tie.y - (tieIndex / segmentCount) * strand.length) * amount * t;
+        y +=
+          (tie.y - strand.anchorY - (tieIndex / segmentCount) * strand.length) *
+          amount *
+          t;
       } else {
-        y += (tie.y - (tieIndex / segmentCount) * strand.length) * amount;
+        y +=
+          (tie.y - strand.anchorY - (tieIndex / segmentCount) * strand.length) *
+          amount;
         x +=
           Math.sin(((j - tieIndex) / (segmentCount - tieIndex)) * Math.PI) *
           width *
@@ -84,16 +93,27 @@ export function initCurtain() {
     const bounds = canvas.getBoundingClientRect();
     width = bounds.width;
     height = bounds.height;
+    strandCount = width < 350 ? 24 : 32;
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    buildLinkSprites();
     strands = Array.from({ length: strandCount }, (_, index) => {
+      const u = (index + 0.5) / strandCount;
+      const arch =
+        canvas.dataset.arch === "true"
+          ? 0.3 * (1 - Math.sqrt(1 - ((2 * u - 1) * 0.98) ** 2)) +
+            0.005 * Math.sin(u * Math.PI * 10) ** 2
+          : 0;
+      const anchorY = height * arch;
       const strand = {
         index,
-        anchor: ((index + 0.5) / strandCount) * width,
-        length: height * (0.965 + Math.sin(index * 2.71) * 0.012),
-        phase: index * 0.14,
+        anchor:
+          u * width + Math.sin(index * 5.37) * Math.min(1.3, width * 0.002),
+        anchorY,
+        length: height * (0.972 + Math.sin(index * 2.71) * 0.008) - anchorY,
+        phase: index * 0.61,
         nodes: Array.from({ length: segmentCount + 1 }, () => ({
           x: 0,
           y: 0,
@@ -111,7 +131,7 @@ export function initCurtain() {
   function simulate(dt) {
     // A critically damped, time-based movement keeps the gathering gentle.
     const acceleration =
-      ((parted ? 1 : 0) - gathered) * 35 - gatherVelocity * 12;
+      ((parted ? 1 : restingGather) - gathered) * 35 - gatherVelocity * 12;
     gatherVelocity += acceleration * dt;
     gathered = clamp(gathered + gatherVelocity * dt, 0, 1);
     const damping = Math.exp(-5.2 * dt);
@@ -137,12 +157,14 @@ export function initCurtain() {
       const tie = targetFor(strand);
       for (let iteration = 0; iteration < 9; iteration++) {
         nodes[0].x = strand.anchor;
-        nodes[0].y = 0;
+        nodes[0].y = strand.anchorY;
         if (gathered > 0.0001) {
           const node = nodes[13];
-          const strength = gathered * 0.38;
-          node.x += (tie.x - node.x) * strength;
-          node.y += (tie.y - node.y) * strength;
+          const tieX = strand.anchor + (tie.x - strand.anchor) * gathered;
+          const hangingY = strand.anchorY + (13 / segmentCount) * strand.length;
+          const tieY = hangingY + (tie.y - hangingY) * gathered;
+          node.x += (tieX - node.x) * 0.38;
+          node.y += (tieY - node.y) * 0.38;
         }
         for (let j = 0; j < segmentCount; j++) {
           const a = nodes[j];
@@ -173,19 +195,92 @@ export function initCurtain() {
         }
       }
       nodes[0].x = strand.anchor;
-      nodes[0].y = 0;
+      nodes[0].y = strand.anchorY;
     }
+  }
+
+  function buildLinkSprites() {
+    // Each link is a small piece of tubing, with an open centre. Drawing these
+    // once keeps thousands of shaded metal surfaces inexpensive to animate.
+    linkLength = clamp(height / 115, 4.1, 5.6);
+    const scale = 4;
+    const size = 12;
+    linkSprites = Array.from({ length: 6 }, (_, light) =>
+      Array.from({ length: 3 }, (_, turn) =>
+        Array.from({ length: 2 }, (_, worn) => {
+          const sprite = document.createElement("canvas");
+          sprite.width = sprite.height = size * scale;
+          const metal = sprite.getContext("2d");
+          metal.scale(scale, scale);
+          metal.translate(size / 2, size / 2);
+          const tube = 0.72;
+          const rx = [0.66, 0.42, 0.12][turn];
+          const ry = (linkLength - tube) / 2;
+          const cap = Math.min(rx, 0.7);
+          const path = new Path2D();
+          path.moveTo(-rx, -ry + cap);
+          path.bezierCurveTo(-rx, -ry, rx, -ry, rx, -ry + cap);
+          path.lineTo(rx, ry - cap);
+          path.bezierCurveTo(rx, ry, -rx, ry, -rx, ry - cap);
+          path.closePath();
+
+          // The unlit silhouette and cool reflected edge remain visible over
+          // both the pale mountains and the dark timber beside the opening.
+          metal.save();
+          metal.translate(0.35, 0.38);
+          metal.strokeStyle = "rgba(5, 8, 10, .65)";
+          metal.lineWidth = 1.02;
+          metal.stroke(path);
+          metal.restore();
+          const shine = light / 5;
+          const face = metal.createLinearGradient(-1, 0, 1, 0);
+          face.addColorStop(0, "#20282a");
+          face.addColorStop(0.23, "#3d3428");
+          face.addColorStop(0.52, worn ? "#51432e" : "#6a5132");
+          face.addColorStop(
+            0.76,
+            `rgb(${128 + shine * 56}, ${97 + shine * 48}, ${59 + shine * 35})`,
+          );
+          face.addColorStop(1, "#3d3328");
+          metal.strokeStyle = face;
+          metal.lineWidth = tube;
+          metal.lineJoin = "round";
+          metal.lineCap = "round";
+          metal.stroke(path);
+
+          // Broken, narrow reflections avoid the uniform yellow outline of a
+          // drawn chain. Adjacent links alternate between face-on and edge-on.
+          metal.beginPath();
+          metal.moveTo(rx + 0.12, -ry + cap * 0.7);
+          metal.lineTo(rx + 0.12, ry * (worn ? -0.05 : 0.5));
+          metal.strokeStyle = `rgba(239, 205, 148, ${0.2 + shine * 0.44})`;
+          metal.lineWidth = turn === 2 ? 0.29 : 0.24;
+          metal.stroke();
+          metal.beginPath();
+          metal.moveTo(-rx - 0.1, -ry * 0.45);
+          metal.lineTo(-rx - 0.1, ry * 0.4);
+          metal.strokeStyle = "rgba(100, 123, 131, .26)";
+          metal.lineWidth = 0.19;
+          metal.stroke();
+          // A contact shadow where the next link threads through this one.
+          metal.beginPath();
+          metal.moveTo(-rx * 0.5, ry - 0.15);
+          metal.lineTo(rx * 0.55, ry - 0.15);
+          metal.strokeStyle = "rgba(13, 14, 12, .74)";
+          metal.lineWidth = 0.32;
+          metal.stroke();
+          return sprite;
+        }),
+      ),
+    );
   }
 
   function draw() {
     ctx.clearRect(0, 0, width, height);
     if (!width || !height) return;
-    const linkHeight = clamp(height / 96, 3.2, 5.5);
-    const linkWidth = linkHeight * 0.27;
-    const links = [];
     for (const strand of strands) {
       let travelled = 0;
-      let nextLink = linkHeight * 0.6;
+      let nextLink = linkLength * 0.38;
       let linkNumber = 0;
       for (let j = 0; j < segmentCount; j++) {
         const a = strand.nodes[j];
@@ -193,96 +288,42 @@ export function initCurtain() {
         const dx = b.x - a.x;
         const dy = b.y - a.y;
         const distance = Math.hypot(dx, dy);
+        const angle = -Math.atan2(dx, dy);
         while (distance > 0 && nextLink <= travelled + distance) {
           const t = (nextLink - travelled) / distance;
-          links.push({
-            x: a.x + dx * t,
-            y: a.y + dy * t,
-            angle: -Math.atan2(dx, dy),
-            edge: (linkNumber + strand.index) % 2,
-            worn: (linkNumber * 7 + strand.index * 11) % 13 < 3,
-          });
-          nextLink += linkHeight * 1.43;
+          const x = a.x + dx * t;
+          const y = a.y + dy * t;
+          const edgeOn = (linkNumber + strand.index) % 2;
+          const turn = edgeOn
+            ? 2
+            : (linkNumber + strand.index * 3) % 7 === 0
+              ? 1
+              : 0;
+          const wear = (linkNumber * 7 + strand.index * 11) % 17 < 4 ? 1 : 0;
+          // Sunset enters from the right. Patches of patina break up the rim
+          // light without flickering or changing as the simulation advances.
+          const light = clamp(
+            Math.round(
+              1.2 +
+                (x / width) * 2.5 +
+                (1 - y / height) * 0.6 +
+                Math.sin(linkNumber * 0.39 + strand.phase) * 0.7,
+            ),
+            0,
+            5,
+          );
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate(angle);
+          ctx.drawImage(linkSprites[light][turn][wear], -6, -6, 12, 12);
+          ctx.restore();
+          // Interlocking links overlap; separated ellipses read as beads.
+          nextLink += linkLength * 0.76;
           linkNumber++;
         }
         travelled += distance;
       }
     }
-
-    // A dark edge, a muted brass face, and a fine broken highlight give each
-    // alternating link depth without a bright illustrated outline.
-    ctx.beginPath();
-    for (const link of links) {
-      const radius = link.edge ? linkWidth * 0.28 : linkWidth;
-      ctx.moveTo(
-        link.x + 0.65 + radius * Math.cos(link.angle),
-        link.y + 0.8 + radius * Math.sin(link.angle),
-      );
-      ctx.ellipse(
-        link.x + 0.65,
-        link.y + 0.8,
-        radius,
-        linkHeight,
-        link.angle,
-        0,
-        Math.PI * 2,
-      );
-    }
-    ctx.lineWidth = 0.95;
-    ctx.strokeStyle = "rgba(8, 7, 5, .76)";
-    ctx.stroke();
-
-    ctx.beginPath();
-    for (const link of links) {
-      const radius = link.edge ? linkWidth * 0.28 : linkWidth;
-      ctx.moveTo(
-        link.x + radius * Math.cos(link.angle),
-        link.y + radius * Math.sin(link.angle),
-      );
-      ctx.ellipse(
-        link.x,
-        link.y,
-        radius,
-        linkHeight,
-        link.angle,
-        0,
-        Math.PI * 2,
-      );
-    }
-    const brass = ctx.createLinearGradient(0, 0, width, height);
-    brass.addColorStop(0, "#927441");
-    brass.addColorStop(0.4, "#76603c");
-    brass.addColorStop(1, "#54452e");
-    ctx.strokeStyle = brass;
-    ctx.lineWidth = 0.8;
-    ctx.stroke();
-
-    ctx.beginPath();
-    for (const link of links) {
-      if (link.worn) continue;
-      const radius = link.edge ? linkWidth * 0.28 : linkWidth;
-      const startAngle = Math.PI * 1.03;
-      ctx.moveTo(
-        link.x +
-          Math.cos(startAngle) * radius * Math.cos(link.angle) -
-          Math.sin(startAngle) * linkHeight * Math.sin(link.angle),
-        link.y +
-          Math.cos(startAngle) * radius * Math.sin(link.angle) +
-          Math.sin(startAngle) * linkHeight * Math.cos(link.angle),
-      );
-      ctx.ellipse(
-        link.x,
-        link.y,
-        radius,
-        linkHeight,
-        link.angle,
-        startAngle,
-        Math.PI * 1.65,
-      );
-    }
-    ctx.strokeStyle = "rgba(201, 174, 113, .54)";
-    ctx.lineWidth = 0.45;
-    ctx.stroke();
   }
 
   function tick(time) {
@@ -318,7 +359,7 @@ export function initCurtain() {
 
   function updateStatic() {
     if (!reducedMotion.matches) return;
-    gathered = parted ? 1 : 0;
+    gathered = parted ? 1 : restingGather;
     gatherVelocity = 0;
     strands.forEach((strand) => staticShape(strand, gathered));
     draw();
@@ -408,11 +449,9 @@ export function initCurtain() {
   }
 
   function onReplay() {
-    document
-      .querySelector("#home")
-      ?.scrollIntoView({
-        behavior: reducedMotion.matches ? "instant" : "smooth",
-      });
+    document.querySelector("#home")?.scrollIntoView({
+      behavior: reducedMotion.matches ? "instant" : "smooth",
+    });
     pointer.active = false;
     setParted(false);
   }
