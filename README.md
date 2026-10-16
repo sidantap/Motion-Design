@@ -2,7 +2,7 @@
 
 ![Dark timber portfolio preview](docs/preview.png)
 
-A responsive portfolio landing page with a custom Newar-inspired gate and interactive brass-chain curtain, based on the supplied video and architectural references.
+A responsive portfolio landing page with a photorealistic Newar-inspired timber doorway and interactive aged-brass chain curtain, based on the supplied video and architectural references. The locally bundled doorway image is generated artwork, with carved wood, a naturally lit courtyard, and worn stone steps.
 
 ## Develop
 

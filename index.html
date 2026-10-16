@@ -1,7 +1,135 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#211b17"><meta name="description" content="Sidan's portfolio — digital experiences, shaped by curiosity and rooted in Nepal."><title>Sidan — A doorway to my world</title><link rel="stylesheet" href="/src/style.css"></head>
-<body><header><a class="wordmark" href="#home" aria-label="Sidan home">sidan<span>®</span></a><span class="header-note">Independent designer & creative developer</span><nav aria-label="Main navigation"><a href="#about">About</a><a href="#work">Selected work <span>↗</span></a><button class="sound" aria-pressed="false" aria-label="Enable chain sounds">Sound off <span>≋</span></button></nav></header>
-<main><section class="hero" id="home"><div class="intro"><p class="eyebrow"><span class="small-star">✳</span> ROOTED IN NEPAL. OPEN TO THE WORLD.</p><h1>Good things<br>begin with<br>an open <em>door.</em></h1><p class="intro-copy">I’m Sidan. I turn ideas into thoughtful digital<br class="desktop"> experiences — with a little curiosity, a little code,<br class="desktop"> and a perspective that’s my own.</p><a class="primary-link" href="#work">Step into my work <span>↗</span></a></div><div class="portal-scene"><div class="portal" id="portal"><div class="inside"><div class="inner-glow"></div><div class="inner-door"></div><span class="inside-symbol">✺</span><span class="inside-caption">THERE’S A WORLD WITHIN.</span><canvas id="curtain" aria-hidden="true"></canvas></div><svg class="gate" viewBox="0 0 500 690" aria-hidden="true" id="gate-art"></svg><div class="steps"><i></i><i></i><i></i></div></div><button class="curtain-control" aria-label="Part the chain curtain" aria-pressed="false"><span>↔</span> Move through the chains</button><span class="gate-caption">A LITTLE OF HOME. A DOOR TO WHAT’S NEXT.</span></div><div class="hero-bottom"><span><i class="status-dot"></i> Available for thoughtful collaborations</span><a href="#about">Take a look around <span>↓</span></a><span class="location">Based in Nepal <span>27.7° N · 85.3° E</span></span></div><span class="vertical-note">CRAFTED WITH INTENTION · 2026</span></section>
-<section class="about" id="about"><p class="eyebrow">THE PERSON BEHIND THE DOOR</p><h2>A local perspective.<br>An open-ended imagination.</h2><p>I’m Sidan, a designer and creative developer exploring the space where culture, interaction, and the web meet. I like making digital things that feel a little more human.</p></section>
-<section class="work" id="work"><div class="section-heading"><div><p class="eyebrow">EXPLORATIONS & EXPERIMENTS</p><h2>On the other side.</h2></div><span>A growing collection of ideas.</span></div><article class="project"><div class="project-art"><span>✳</span><p>Between craft<br>and code.</p><div class="orbit"></div></div><div class="project-info"><div><p class="eyebrow">INTERACTIVE WEB · 2026</p><h3>The doorway experiment</h3><p>A study in digital material, movement, and a sense of place.</p></div><button id="replay">Experience again <span>↗</span></button></div></article></section>
-<footer><p>Have something in mind?<br><a href="mailto:hello@example.com">Let’s open a conversation. ↗</a></p><span>SIDAN © 2026<br>Made with curiosity, in Nepal.</span></footer></main><script type="module" src="/src/main.js"></script></body></html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#181511" />
+    <meta
+      name="description"
+      content="Sidan's portfolio — digital experiences, shaped by curiosity and rooted in Nepal."
+    />
+    <title>Sidan — A doorway to my world</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header>
+      <a class="wordmark" href="#home" aria-label="Sidan home"
+        >sidan<span>®</span></a
+      ><span class="header-note"
+        >Independent designer & creative developer</span
+      >
+      <nav aria-label="Main navigation">
+        <a href="#about">About</a
+        ><a href="#work">Selected work <span>↗</span></a
+        ><button
+          class="sound"
+          aria-pressed="false"
+          aria-label="Enable chain sounds"
+        >
+          Sound off <span>≋</span>
+        </button>
+      </nav>
+    </header>
+    <main>
+      <section class="hero" id="home">
+        <div class="intro">
+          <p class="eyebrow">
+            <span class="small-star">✳</span> ROOTED IN NEPAL. OPEN TO THE
+            WORLD.
+          </p>
+          <h1>Good things<br />begin with<br />an open <em>door.</em></h1>
+          <p class="intro-copy">
+            I’m Sidan. I turn ideas into thoughtful digital<br
+              class="desktop"
+            />
+            experiences — with a little curiosity, a little code,<br
+              class="desktop"
+            />
+            and a perspective that’s my own.
+          </p>
+          <a class="primary-link" href="#work"
+            >Step into my work <span>↗</span></a
+          >
+        </div>
+        <div class="portal-scene">
+          <div class="portal" id="portal">
+            <img
+              class="gate-photo"
+              src="/src/assets/newar-doorway.webp"
+              alt="Photorealistic Newar-inspired doorway with deeply carved aged timber and worn stone steps"
+              width="1024"
+              height="1536"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <div class="inside">
+              <canvas id="curtain" aria-hidden="true"></canvas>
+            </div>
+          </div>
+          <button
+            class="curtain-control"
+            aria-label="Part the chain curtain"
+            aria-pressed="false"
+          >
+            <span>↔</span> Move through the chains</button
+          ><span class="gate-caption"
+            >A LITTLE OF HOME. A DOOR TO WHAT’S NEXT.</span
+          >
+        </div>
+        <div class="hero-bottom">
+          <span
+            ><i class="status-dot"></i> Available for thoughtful
+            collaborations</span
+          ><a href="#about">Take a look around <span>↓</span></a
+          ><span class="location"
+            >Based in Nepal <span>27.7° N · 85.3° E</span></span
+          >
+        </div>
+        <span class="vertical-note">CRAFTED WITH INTENTION · 2026</span>
+      </section>
+      <section class="about" id="about">
+        <p class="eyebrow">THE PERSON BEHIND THE DOOR</p>
+        <h2>A local perspective.<br />An open-ended imagination.</h2>
+        <p>
+          I’m Sidan, a designer and creative developer exploring the space where
+          culture, interaction, and the web meet. I like making digital things
+          that feel a little more human.
+        </p>
+      </section>
+      <section class="work" id="work">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">EXPLORATIONS & EXPERIMENTS</p>
+            <h2>On the other side.</h2>
+          </div>
+          <span>A growing collection of ideas.</span>
+        </div>
+        <article class="project">
+          <div class="project-art">
+            <span>✳</span>
+            <p>Between craft<br />and code.</p>
+          </div>
+          <div class="project-info">
+            <div>
+              <p class="eyebrow">INTERACTIVE WEB · 2026</p>
+              <h3>The doorway experiment</h3>
+              <p>
+                A study in digital material, movement, and a sense of place.
+              </p>
+            </div>
+            <button id="replay">Experience again <span>↗</span></button>
+          </div>
+        </article>
+      </section>
+      <footer>
+        <p>
+          Have something in mind?<br /><a href="mailto:hello@example.com"
+            >Let’s open a conversation. ↗</a
+          >
+        </p>
+        <span>SIDAN © 2026<br />Made with curiosity, in Nepal.</span>
+      </footer>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
